@@ -26,7 +26,7 @@ export class Buyer {
     }
   }
 
-  getData(): IBuyer | null {
+  getData(): IBuyer {
     return {
       payment: this.payment,
       address: this.address,
