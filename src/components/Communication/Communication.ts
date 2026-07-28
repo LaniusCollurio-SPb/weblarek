@@ -7,10 +7,10 @@ export class Communication {
   }
 
   getProducts(): Promise<IProductsResponse> {
-    return this.api.get('/product/');
+    return this.api.get<IProductsResponse>('/product/');
   }
 
   createOrder(orderData: IOrder): Promise<IOrderResponse> {
-    return this.api.post('/order/', orderData);
+    return this.api.post<IOrderResponse>('/order/', orderData);
   }
 }
