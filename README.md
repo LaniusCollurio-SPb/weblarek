@@ -290,3 +290,66 @@ interface IOrderResponse {
 Методы:  
 `getProducts(): Promise<IProductsResponse>` - направляет get запрос на эндпоинт /product/ и возвращает объект, полученный от сервера, в котором находится массив товаров.
 `createOrder(orderData: IOrder): Promise<IOrderResponse>` - направляет post запрос на эндпоинт /order/ и передаёт в него данные, полученные в параметрах метода, а возвращает объект, подтверждающий покупку на определенную сумму.
+
+### Слой представления (View)
+#### Класс `Header`
+
+#### Класс `Gallery`
+
+#### Класс `Modal`
+
+#### Класс `Cart`
+
+#### Класс `Card`
+
+#### Класс `CardCatalog`
+
+#### Класс `CardInCart`
+
+#### Класс `CardPreview`
+
+#### Класс `Form`
+
+#### Класс `FormOrder`
+
+#### Класс `FormContacts`
+
+#### Класс `Success`
+
+
+### Презентер
+Презентер реализован в основном скрипте в файле `main.ts`.
+Что делает презентер в контексте этого приложения:
+1. Синхронизация состояния - собирает данные и раздает их компонентам.
+2. Обработка действий - слушает события от компонентов и реагирует на них.
+3. Бизнес-логика - валидирует данные и управляет логикой.
+4. Маппинг - связывает UI с данными.
+
+### События приложения
+`products:changed` 
+
+catalog:click-card
+
+preview:changed
+
+preview:click-button
+
+cart:open
+
+cart:order
+
+cart:changed
+
+cart:remove
+
+payment:change
+
+form:change
+
+order:submit
+
+buyer:changed
+
+contacts:submit
+
+success:close

@@ -1,3 +1,5 @@
+import { categoryMap } from "../utils/constants";
+
 export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
 
 export interface IApi {
@@ -45,3 +47,8 @@ export interface IOrderResponse {
     total: number;
 }
 
+export type TCategory = keyof typeof categoryMap;
+
+export interface ICardActions {
+    onClick: (event: MouseEvent) => void;
+}
