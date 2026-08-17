@@ -4,7 +4,7 @@ import { Component } from "../base/Component";
 
 export type ICard = Pick<IProduct, 'title' | 'price'>;
 
-export class Card<T> extends Component<ICard & T> {
+export abstract class Card<T> extends Component<ICard & T> {
   protected titleElement: HTMLElement;
   protected priceElement: HTMLElement;
 
