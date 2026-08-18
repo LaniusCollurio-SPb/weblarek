@@ -47,6 +47,19 @@ export interface IOrderResponse {
     total: number;
 }
 
+export interface ICardWithImg extends ICard {
+    image: {
+        src: string,
+        alt: string
+    }
+    category: string;
+    description: string;
+    buttonDisabled: boolean;
+    buttonText: string;
+}
+
+export type ICard = Pick<IProduct, 'title' | 'price'>;
+
 export type TCategory = keyof typeof categoryMap;
 
 export interface ICardActions {

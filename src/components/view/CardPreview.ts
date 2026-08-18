@@ -1,11 +1,9 @@
-import { ICardActions, IProduct, TCategory } from "../../types";
+import { ICardActions, ICardWithImg, TCategory } from "../../types";
 import { categoryMap, CDN_URL } from "../../utils/constants";
 import { ensureElement } from "../../utils/utils";
 import { Card } from "./Card";
 
-type TCardPreview = Omit<IProduct, "id">;
-
-export class CardPreview<T> extends Card<TCardPreview & T> {
+export class CardPreview extends Card<ICardWithImg> {
   protected descriptionElement: HTMLElement;
   protected toCartButtonElement: HTMLButtonElement;
   protected categoryElement: HTMLElement;
@@ -42,8 +40,8 @@ export class CardPreview<T> extends Card<TCardPreview & T> {
     }
   }
 
-  set image(value: string) {
-    this.setImage(this.imageElement, CDN_URL + value, this.title);
+  set image(img: {src: string, alt: string}) {
+    this.setImage(this.imageElement, CDN_URL + img.src, img.alt);
   }
 
   set category(value: TCategory) {
@@ -67,12 +65,5 @@ export class CardPreview<T> extends Card<TCardPreview & T> {
 
   set price(value: number | null) {
     super.price = value;
-    if (value === null) {
-      this.buttonText = "Недоступно";
-      this.buttonDisabled = true;
-    } else {
-      this.buttonText = "Купить";
-      this.buttonDisabled = false;
-    }
   }
 }

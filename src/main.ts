@@ -15,9 +15,9 @@ import { Header } from './components/view/Header';
 import { Modal } from './components/view/Modal';
 import { Success } from './components/view/Success';
 import './scss/styles.scss';
-import { IOrder, IProduct, TPayment } from './types';
+import { ICardWithImg, IOrder, IProduct, TPayment } from './types';
 import { API_URL } from './utils/constants';
-import { cloneTemplate, ensureElement } from './utils/utils';
+import { cloneTemplate, ensureElement, getImageSrc } from './utils/utils';
 
 const events = new EventEmitter();
 
@@ -37,7 +37,7 @@ const cardPreviewTemplate = cloneTemplate<HTMLElement>("#card-preview");
 
 const header = new Header(headerElement, events);
 const gallery = new Gallery(galleryElement);
-const modal = new Modal(modalElement, events);
+const modal = new Modal(modalElement);
 
 const cart = new Cart(cartTemplate, events);
 const formOrder = new FormOrder(formOrderTemplate, events);
@@ -59,13 +59,16 @@ events.on<IProduct>("products:changed", () => {
     const card = new CardCatalog(cardCatalogTemplate, {
       onClick: () => events.emit("catalog:click-card", product),
     });
-    const pngImageSrc = `${product.image.replace(/\.svg$/, ".png")}`;
+    const pngImageSrc = getImageSrc(product);
     
     return card.render({
       title: product.title,
       price: product.price,
       category: product.category,
-      image: pngImageSrc,
+      image: {
+        src: pngImageSrc,
+        alt: product.title
+      }
     })
   })
 
@@ -76,26 +79,26 @@ events.on<IProduct>('catalog:click-card', (product) => {
   productsCatalogModel.setSelectedProduct(product.id);
 });
 
-events.on<IProduct>('preview:changed', () => {
+events.on<ICardWithImg>('product:selected', () => {
   const product = productsCatalogModel.getSelectedProduct();
   
   if (!product) return;
-  const pngImageSrc = `${product.image.replace(/\.svg$/, ".png")}`;
+  const pngImageSrc = getImageSrc(product);
+  
+  const checkInCart = shoppingCartModel.checkProduct(product.id);
 
-  cardPreview.render({
+  modal.render({ content: cardPreview.render({
     title: product.title,
     price: product.price,
     category: product.category,
-    image: pngImageSrc,
-    description: product.description
-  });
-  
-  const checkInCart = shoppingCartModel.checkProduct(product.id);
-  if (product.price !== null) {
-    cardPreview.buttonText = checkInCart ? "Удалить из корзины" : "Купить";
-    }
-
-  modal.render({ content: cardPreview.render() });
+    image: {
+      src: pngImageSrc,
+      alt: product.title
+    },
+    description: product.description,
+    buttonDisabled: product.price === null ? true : false,
+    buttonText: product.price !== null ? checkInCart ? "Удалить из корзины" : "Купить" : "Недоступно"
+  }) });
   modal.open();
 });
 
@@ -103,27 +106,12 @@ events.on<IProduct>("preview:click-button", () => {
   const product = productsCatalogModel.getSelectedProduct();
   if(!product) return;
 
-  if(shoppingCartModel.checkProduct(product.id)) {
-    shoppingCartModel.removeProduct(product.id);
-    header.render({
-      counter: shoppingCartModel.getNumberOfProducts(),
-    })
-    modal.close();
-  } else {
-    shoppingCartModel.addProduct(product);
-    header.render({
-      counter: shoppingCartModel.getNumberOfProducts(),
-    })
-    modal.close();
-  }
+  shoppingCartModel.checkProduct(product.id) ? shoppingCartModel.removeProduct(product.id): shoppingCartModel.addProduct(product);
+  modal.close();
 })
 
 events.on("cart:open", () => {
-  if(shoppingCartModel.getNumberOfProducts() === 0) {
-    cart.buttonDisabled = true;
-  }
-  
-  modal.render({content: cart.render({})});
+  modal.render({content: cart.render()});
   modal.open();
 })
 
@@ -142,12 +130,19 @@ events.on("cart:changed", () => {
         events.emit("cart:remove", product);
       }
     });
-    card.itemIndex = index + 1;
-    return card.render(product);
+
+    return card.render({
+      title: product.title,
+      price: product.price,
+      index: index + 1,
+    });
   });
-  cart.cartList = cards;
-  cart.totalPrice = shoppingCartModel.getTotalPrice();
-  cart.buttonDisabled = shoppingCartModel.getNumberOfProducts() === 0;
+
+  cart.render({
+    cartList: cards,
+    totalPrice: shoppingCartModel.getTotalPrice(),
+    buttonDisabled: shoppingCartModel.getNumberOfProducts() === 0
+  })
 })
 
 events.on<IProduct>("cart:remove", (product) => {
@@ -189,7 +184,6 @@ events.on("buyer:changed", () => {
 
   formOrder.valid = formOrderErrors.length === 0;
   formOrder.error = formOrderErrors.join("; ");
-  if(!buyer.payment) return;
   formOrder.render({
     address: buyer.address,
     payment: buyer.payment,
@@ -217,28 +211,26 @@ events.on("buyer:changed", () => {
 events.on("contacts:submit", async () => {
   const buyer = buyerModel.getData();
 
-  try { 
-    const order: IOrder = {
-      payment: buyer.payment,
-      address: buyer.address,
-      email: buyer.email,
-      phone: buyer.phone,
-      total: shoppingCartModel.getTotalPrice(),
-      items: shoppingCartModel.getProductsList().map(product => product.id),
-    }
+  const order: IOrder = {
+    payment: buyer.payment,
+    address: buyer.address,
+    email: buyer.email,
+    phone: buyer.phone,
+    total: shoppingCartModel.getTotalPrice(),
+    items: shoppingCartModel.getProductsList().map(product => product.id),
+  }
 
-    await communication.createOrder(order)
-      .then((answer) => {
-        modal.render({
-          content: success.render({
-            price: answer.total,
-          })
-        });
-        shoppingCartModel.clearShoppingCart();
-        buyerModel.clearData();
+  try {
+    const answer = await communication.createOrder(order);
+    modal.render({
+      content: success.render({
+        price: answer.total
       })
-      .catch((err) => {console.error(err)});
-  } catch(err) {
+    });
+
+    shoppingCartModel.clearShoppingCart();
+    buyerModel.clearData();
+  } catch (err) {
     console.error("Ошибка при отправке заказа: ", err);
   }
 })

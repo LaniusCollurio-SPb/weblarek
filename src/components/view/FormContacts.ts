@@ -2,7 +2,7 @@ import { ensureElement } from "../../utils/utils";
 import { IEvents } from "../base/Events";
 import { Form } from "./Form";
 
-export interface IFormContacts {
+interface IFormContacts {
   email: string;
   phone: string;
 }
@@ -11,7 +11,7 @@ export class FormContacts extends Form<IFormContacts> {
   protected emailElement: HTMLInputElement;
   protected phoneElement: HTMLInputElement;
 
-  constructor(container: HTMLFormElement, protected events: IEvents) {
+  constructor(container: HTMLFormElement, events: IEvents) {
     super(container, events);
 
     this.emailElement = ensureElement<HTMLInputElement>(
@@ -24,7 +24,7 @@ export class FormContacts extends Form<IFormContacts> {
     );
   }
 
-  set eMail(value: string) {
+  set email(value: string) {
     this.emailElement.value = value;
   }
 

@@ -2,13 +2,13 @@ import { ensureElement } from "../../utils/utils";
 import { Component } from "../base/Component";
 import { IEvents } from "../base/Events";
 
-export interface ISuccess {
+interface ISuccess {
   price: number;
 }
 
 export class Success extends Component<ISuccess> {
-  successButtonElement: HTMLButtonElement;
-  priceElement: HTMLElement;
+  protected successButtonElement: HTMLButtonElement;
+  protected priceElement: HTMLElement;
 
   constructor(container: HTMLElement, protected events: IEvents) {
     super(container);

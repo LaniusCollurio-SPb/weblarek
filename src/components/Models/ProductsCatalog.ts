@@ -26,7 +26,7 @@ export class ProductsCatalog {
   setSelectedProduct(id: string): void {
     const product = this.getProduct(id);
     this.selectedProduct = product ?? null;
-    this.events.emit("preview:changed");
+    this.events.emit("product:selected");
   }
 
   getSelectedProduct(): IProduct | null {

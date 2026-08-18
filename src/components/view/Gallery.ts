@@ -1,6 +1,6 @@
 import { Component } from "../base/Component";
 
-export interface IGallery {
+interface IGallery {
     catalog: HTMLElement[];
 }
 

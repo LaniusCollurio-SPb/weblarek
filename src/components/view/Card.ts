@@ -1,8 +1,6 @@
-import { IProduct } from "../../types";
+import { ICard } from "../../types";
 import { ensureElement } from "../../utils/utils";
 import { Component } from "../base/Component";
-
-export type ICard = Pick<IProduct, 'title' | 'price'>;
 
 export abstract class Card<T> extends Component<ICard & T> {
   protected titleElement: HTMLElement;
@@ -33,5 +31,4 @@ export abstract class Card<T> extends Component<ICard & T> {
       this.priceElement.textContent = `${value} синапсов`;
     }
   }
-
 }

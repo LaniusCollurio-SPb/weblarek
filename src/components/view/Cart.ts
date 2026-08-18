@@ -2,15 +2,16 @@ import { ensureElement } from "../../utils/utils";
 import { Component } from "../base/Component";
 import { IEvents } from "../base/Events";
 
-export interface ICart {
-  cartList: HTMLElement;
+interface ICart {
+  cartList: HTMLElement[];
   totalPrice: number;
+  buttonDisabled: boolean;
 }
 
 export class Cart extends Component<ICart> {
-  cartListElement: HTMLElement;
-  totalPriceElement: HTMLElement;
-  cartButtonElement: HTMLButtonElement;
+  protected cartListElement: HTMLElement;
+  protected totalPriceElement: HTMLElement;
+  protected cartButtonElement: HTMLButtonElement;
 
   constructor(container: HTMLElement, protected events: IEvents) {
     super(container);

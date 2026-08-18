@@ -1,3 +1,5 @@
+import { IProduct } from "../types";
+
 export function pascalToKebab(value: string): string {
     return value.replace(/([a-z0–9])([A-Z])/g, "$1-$2").toLowerCase();
 }
@@ -135,4 +137,8 @@ export function createElement<
         }
     }
     return element;
+}
+
+export function getImageSrc(product: IProduct): string {
+    return product.image.replace(/\.svg$/, ".png");
 }

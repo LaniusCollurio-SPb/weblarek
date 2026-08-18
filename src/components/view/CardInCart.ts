@@ -1,6 +1,6 @@
-import { ICardActions } from "../../types";
+import { ICard, ICardActions } from "../../types";
 import { ensureElement } from "../../utils/utils";
-import { Card, ICard } from "./Card";
+import { Card } from "./Card";
 
 export type TCardInCart = ICard & {index: number};
 
@@ -29,7 +29,7 @@ export class CardInCart extends Card<TCardInCart> {
     }
   }
 
-  set itemIndex(value: number) {
+  set index(value: number) {
     this.productIndexElement.textContent = String(value);
   }
 }
