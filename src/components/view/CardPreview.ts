@@ -62,8 +62,4 @@ export class CardPreview extends Card<ICardWithImg> {
   set buttonDisabled(value: boolean) {
     this.toCartButtonElement.disabled = value;
   }
-
-  set price(value: number | null) {
-    super.price = value;
-  }
 }
